@@ -1,14 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
+#include <time.h>
 
 void help(void);
 void add(char *item, char *time);
+void get_time(time_t current_time);
 
 
 int main(int argc, char *argv[])
 {
+    time_t current_time = time(NULL);
+    printf("Current time, master AdminDev:\n");
+    get_time(current_time);
 
     if(argc == 1)
     {
@@ -39,11 +43,23 @@ int main(int argc, char *argv[])
 
 void help(void)
 {
-    printf("usage: ./todo cmd item time fmt\n");
+    printf("usage: ./todo cmd item date time\n");
+    printf("cmd: add, all, done, edit\n");
+    printf("item: Todo to do\n");
+    printf("date: \"today\", \"tomorrow\", \"4 char month two digit date\"\n");
+    printf("time: \"noon\", \"3:30 PM\", \"4:45 AM\"\n");
+
 }
 
 void add(char *item, char *time)
 {
     puts(item);
     puts(time);
+}
+
+void get_time(time_t current_time)
+{
+    current_time = time(NULL);
+    if(current_time != (time_t)(-1))
+        printf("%s\n", asctime(localtime(&current_time)));
 }
