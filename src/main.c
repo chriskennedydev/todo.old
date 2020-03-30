@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
     
     int check_usage = strncmp(argv[1], "help", 4);
     int check_add = strncmp(argv[1], "add", 4);
-    int check_show = strncmp(argv[1], "show", 4);
-    int check_done = strncmp(argv[1], "done", 4);
+    int check_list = strncmp(argv[1], "list", 4);
+    int check_delete = strncmp(argv[1], "delete", 4);
 
 
     if(check_usage == 0)
@@ -41,13 +41,13 @@ int main(int argc, char *argv[])
         
     }
 
-    if(check_done == 0)
+    if(check_delete == 0)
     {
         FILE *fptr;
         FILE *tmp_ptr;
         char *item;
         unsigned long i;
-        int compared_item;
+        unsigned long compared_item;
 
 
         fptr = fopen("todo.dat", "rb");
@@ -63,8 +63,8 @@ int main(int argc, char *argv[])
             item = malloc(16);
             if(fgets(item, 16, fptr) != NULL)
             {
-                compared_item = strncmp(item, argv[2], 4);
-                if(compared_item != 0)
+                compared_item = atoi(argv[2]);
+                if(compared_item != i + 1)
                     fprintf(tmp_ptr, "%s", item);
             }
             free(item);
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
     }
 
 
-    if(check_show == 0)
+    if(check_list == 0)
     {
         FILE *fptr;
         char item[250];
@@ -92,7 +92,9 @@ int main(int argc, char *argv[])
         for(i = 0; i < sizeof(fptr); i++)
         {
             if(fgets(item, 250, fptr) != NULL)
-                printf("%s", item);
+            {
+                printf("%ld %s", i + 1, item);
+            }
         }
 
         fclose(fptr); 
@@ -102,10 +104,10 @@ int main(int argc, char *argv[])
 
 void help(void)
 {
-    printf("usage: ./todo cmd item | show\n");
-    printf("cmd: add, done\n");
+    printf("usage: ./todo cmd item | list\n");
+    printf("cmd: add, delete\n");
     printf("item: Todo to do\n");
-    printf("show: list current todos\n");
+    printf("list: list current todos\n");
 }
 
 void add(char *item)
