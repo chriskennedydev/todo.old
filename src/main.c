@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
         printf("\n");
         exit(0);
     }
+
     
     int check_usage = strncmp(argv[1], "help", 4);
     int check_add = strncmp(argv[1], "add", 4);
@@ -46,8 +47,8 @@ int main(int argc, char *argv[])
         FILE *fptr;
         FILE *tmp_ptr;
         char *item;
-        unsigned long i;
-        unsigned long compared_item;
+        int i;
+        int compared_item;
 
 
         fptr = fopen("todo.dat", "rb");
@@ -58,10 +59,12 @@ int main(int argc, char *argv[])
             return 1;
         }
 
-        for(i = 0; i < sizeof(fptr); i++)
+        int lines = lines_in_file("todo.dat");
+
+        for(i = 0; i < lines; i++)
         {
-            item = malloc(16);
-            if(fgets(item, 16, fptr) != NULL)
+            item = malloc(250);
+            if(fgets(item, 250, fptr) != NULL)
             {
                 compared_item = atoi(argv[2]);
                 if(compared_item != i + 1)
@@ -80,7 +83,7 @@ int main(int argc, char *argv[])
     {
         FILE *fptr;
         char item[250];
-        unsigned long i;
+        int i;
 
         fptr = fopen("todo.dat", "rb");
         if(fptr == NULL)
@@ -89,11 +92,13 @@ int main(int argc, char *argv[])
             return 1;
         }
 
-        for(i = 0; i < sizeof(fptr); i++)
+        int lines = lines_in_file("todo.dat");
+
+        for(i = 0; i < lines; i++)
         {
             if(fgets(item, 250, fptr) != NULL)
             {
-                printf("%ld %s", i + 1, item);
+                printf("%d %s", i + 1, item);
             }
         }
 
@@ -177,7 +182,7 @@ int lines_in_file(char *file_name)
     chr = getc(fptr);
     while(chr != EOF)
     {
-        if(chr == 'n')
+        if(chr == '\n')
             lines++;
         chr = getc(fptr);
     }
