@@ -1,19 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 void help(void);
 int lines_in_file(char *file_name);
 void add(char *item);
-void get_time(time_t current_time);
-char *update_todo(char *item, char *old, char *replacement);
 
 int main(int argc, char *argv[])
 {
-    //time_t current_time = time(NULL);
-    //printf("Current time: ");
-    //get_time(current_time);
 
     if(argc == 1)
     {
@@ -129,47 +123,6 @@ void add(char *item)
 
     fclose(output);
 }
-
-void get_time(time_t current_time)
-{
-    if(current_time != (time_t)(-1))
-        printf("%s\n", asctime(localtime(&current_time)));
-}
-
-char *update_todo(char *item, char *old, char *replacement)
-{
-    char *result;
-    int i, count = 0;
-    int new_word_length = strlen(replacement);
-    int old_word_length = strlen(old);
-
-    for(i = 0; item[i] != '\0'; i++)
-    {
-        if(strstr(&item[i], old) == &item[i])
-        {
-            count++;
-            i += old_word_length - 1;
-        }
-    }
-
-    result = (char *)malloc(i + count * (new_word_length - old_word_length) + 1);
-
-    i = 0;
-    while(*item)
-    {
-        if(strstr(item, old) == item)
-        {
-            strcpy(&result[i], replacement);
-            i += new_word_length;
-            item += old_word_length;
-        }
-        else
-            result[i++] = *item++;
-    }
-    result[i] = '\0';
-    return result;
-}
-
 
 int lines_in_file(char *file_name)
 {
