@@ -1,13 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dirent.h>
+#include <errno.h> 
+#include <unistd.h>
+#include <pwd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 void help(void);
 int lines_in_file(char *file_name);
 void add(char *item);
+void check_dir(void);
+void menu(void);
+
 
 int main(int argc, char *argv[])
 {
+    struct passwd *pw = getpwuid(getuid());
+    const char *homedir = pw->pw_dir;
+    const char *workdir = "/.todo";
+
+    char filedir[80];
+
+    strcpy(filedir, homedir);
+    strcat(filedir, workdir);
+    strcat(filedir, "/todo.dat");
 
     if(argc == 1)
     {
@@ -32,8 +50,8 @@ int main(int argc, char *argv[])
 
     if(check_add == 0)
     {
+        check_dir();
         add(argv[2]);
-        
     }
 
     if(check_delete == 0)
@@ -45,15 +63,15 @@ int main(int argc, char *argv[])
         int compared_item;
 
 
-        fptr = fopen("todo.dat", "rb");
-        tmp_ptr = fopen("temp.dat", "wb");
+        fptr = fopen(filedir, "rb");
+        tmp_ptr = fopen("/home/chris/.todo/temp.dat", "wb");
         if(fptr == NULL)
         {
             printf("Cannot open file.\n");
             return 1;
         }
 
-        int lines = lines_in_file("todo.dat");
+        int lines = lines_in_file(filedir);
 
         for(i = 0; i < lines; i++)
         {
@@ -69,24 +87,25 @@ int main(int argc, char *argv[])
 
         fclose(fptr); 
         fclose(tmp_ptr);
-        rename("temp.dat", "todo.dat");
+        rename("/home/chris/.todo/temp.dat", filedir);
     }
 
 
     if(check_list == 0)
     {
+        menu();
         FILE *fptr;
         char item[250];
         int i;
 
-        fptr = fopen("todo.dat", "rb");
+        fptr = fopen(filedir, "rb");
         if(fptr == NULL)
         {
             printf("Cannot open file.\n");
             return 1;
         }
 
-        int lines = lines_in_file("todo.dat");
+        int lines = lines_in_file(filedir);
 
         for(i = 0; i < lines; i++)
         {
@@ -112,7 +131,7 @@ void help(void)
 void add(char *item)
 {
     FILE *output;
-    char *file_name = "todo.dat";
+    char *file_name = "/home/chris/.todo/todo.dat";
     
     if((output = fopen(file_name, "ab")) == NULL)
     {
@@ -141,4 +160,28 @@ int lines_in_file(char *file_name)
     }
     fclose(fptr);
     return lines;
+}
+
+void check_dir(void)
+{
+    DIR* todo = opendir("/home/chris/.todo");
+    if(todo)
+    {
+        closedir(todo);
+    }
+    else if(ENOENT == errno) 
+    {
+        mkdir("/home/chris/.todo", 0775);
+    }
+    else 
+    {
+        printf("Could not create ~/.todo dir\n");
+        exit(1);
+    }
+}
+
+void menu(void)
+{
+    printf("Todo List\n");
+    printf("----------\n");
 }
