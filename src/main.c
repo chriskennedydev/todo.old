@@ -10,22 +10,26 @@
 
 void help(void);
 int lines_in_file(char *file_name);
-void add(char *item);
+void add(char *item, char *filename);
 void check_dir(void);
 void menu(void);
 
 
 int main(int argc, char *argv[])
 {
-    struct passwd *pw = getpwuid(getuid());
-    const char *homedir = pw->pw_dir;
+    const char *homedir = getenv("HOME");
     const char *workdir = "/.todo";
 
-    char filedir[80];
+    char filedir[4096];
+    char tmpfile[4096];
 
     strcpy(filedir, homedir);
     strcat(filedir, workdir);
     strcat(filedir, "/todo.dat");
+
+    strcpy(tmpfile, homedir);
+    strcat(tmpfile, workdir);
+    strcat(tmpfile, "/temp.dat");
 
     if(argc == 1)
     {
@@ -34,7 +38,6 @@ int main(int argc, char *argv[])
         printf("\n");
         exit(0);
     }
-
     
     int check_usage = strncmp(argv[1], "help", 4);
     int check_add = strncmp(argv[1], "add", 4);
@@ -51,7 +54,7 @@ int main(int argc, char *argv[])
     if(check_add == 0)
     {
         check_dir();
-        add(argv[2]);
+        add(argv[2], filedir);
     }
 
     if(check_delete == 0)
@@ -64,7 +67,7 @@ int main(int argc, char *argv[])
 
 
         fptr = fopen(filedir, "rb");
-        tmp_ptr = fopen("/home/chris/.todo/temp.dat", "wb");
+        tmp_ptr = fopen(tmpfile, "wb");
         if(fptr == NULL)
         {
             printf("Cannot open file.\n");
@@ -87,7 +90,7 @@ int main(int argc, char *argv[])
 
         fclose(fptr); 
         fclose(tmp_ptr);
-        rename("/home/chris/.todo/temp.dat", filedir);
+        rename(tmpfile, filedir);
     }
 
 
@@ -128,14 +131,13 @@ void help(void)
     printf("list: list current todos\n");
 }
 
-void add(char *item)
+void add(char *item, char *filename)
 {
     FILE *output;
-    char *file_name = "/home/chris/.todo/todo.dat";
     
-    if((output = fopen(file_name, "ab")) == NULL)
+    if((output = fopen(filename, "ab")) == NULL)
     {
-        printf("Can't open %s for reading.\n", file_name);
+        printf("Can't open %s for reading.\n", filename);
         exit(1);
     }
     fprintf(output, "%s\n", item);
@@ -175,7 +177,7 @@ void check_dir(void)
     }
     else 
     {
-        printf("Could not create ~/.todo dir\n");
+        printf("Could not create ~/.todo dir: %s\n", strerror(errno));
         exit(1);
     }
 }
