@@ -8,9 +8,12 @@
 
 ### Install
 `make`
+
 `sudo make install`
 
 ### Usage
 `todo add item`
+
 `todo list`
+
 `todo del num`
