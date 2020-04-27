@@ -17,3 +17,7 @@
 `todo list`
 
 `todo del num`
+
+### Example
+
+![Example](examples/ex1.png)
