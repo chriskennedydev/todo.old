@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     int check_usage = strncmp(argv[1], "help", 4);
     int check_add = strncmp(argv[1], "add", 4);
     int check_list = strncmp(argv[1], "list", 4);
-    int check_delete = strncmp(argv[1], "delete", 4);
+    int check_delete = strncmp(argv[1], "del", 4);
 
 
     if(check_usage == 0)
