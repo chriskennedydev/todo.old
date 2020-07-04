@@ -11,7 +11,7 @@
 void help(void);
 int lines_in_file(char *file_name);
 void add(char *item, char *filename);
-void check_dir(void);
+void check_dir(const char *homedir, const char *workdir);
 void menu(void);
 
 
@@ -20,8 +20,8 @@ int main(int argc, char *argv[])
     const char *homedir = getenv("HOME");
     const char *workdir = "/.todo";
 
-    char filedir[4096];
-    char tmpfile[4096];
+    char filedir[2048];
+    char tmpfile[2048];
 
     strcpy(filedir, homedir);
     strcat(filedir, workdir);
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
     if(check_add == 0)
     {
-        check_dir();
+        check_dir(homedir, workdir);
         add(argv[2], filedir);
     }
 
@@ -164,16 +164,20 @@ int lines_in_file(char *file_name)
     return lines;
 }
 
-void check_dir(void)
+void check_dir(const char *homedir, const char *workdir)
 {
-    DIR* todo = opendir("/home/chris/.todo");
+    char filedir[2048];
+    strcpy(filedir, homedir);
+    strcat(filedir, workdir);
+    DIR* todo = opendir(filedir);
+
     if(todo)
     {
         closedir(todo);
     }
     else if(ENOENT == errno) 
     {
-        mkdir("/home/chris/.todo", 0775);
+        mkdir(filedir, 0775);
     }
     else 
     {

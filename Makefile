@@ -1,5 +1,5 @@
 all:
-	gcc -o todo -g -Wall -Wextra \
+	gcc -o todo -Wall -Wextra -O2 \
 	src/*.c
 
 clean:
