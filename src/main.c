@@ -44,6 +44,14 @@ int main(int argc, char *argv[])
     int check_list = strncmp(argv[1], "list", 4);
     int check_delete = strncmp(argv[1], "del", 4);
 
+    int i;
+    int strsize = 0;
+    for(i = 1; i < argc; i++) {
+        strsize += strlen(argv[i]);
+        if(argc > i + 1)
+            strsize++;
+    }
+
 
     if(check_usage == 0)
     {
@@ -53,8 +61,18 @@ int main(int argc, char *argv[])
 
     if(check_add == 0)
     {
+        char *item;
+        item = malloc(strsize);
+        item[0] = '\0';
+
+        for(int i = 2; i < argc; i++) {
+            strcat(item, argv[i]);
+            if(argc > i + 1)
+                strcat(item, " ");
+        }
+
         check_dir(homedir, workdir);
-        add(argv[2], filedir);
+        add(item, filedir);
     }
 
     if(check_delete == 0)
