@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
 void help(void)
 {
     printf("usage: ./todo cmd item | list\n");
-    printf("cmd: add, delete\n");
+    printf("cmd: add, del\n");
     printf("item: Todo to do\n");
     printf("list: list current todos\n");
 }
