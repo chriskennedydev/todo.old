@@ -3,7 +3,7 @@ all:
 	src/*.c
 
 clean:
-	rm -f todo
+	@rm -f todo
 
 install:
 	cp todo /usr/bin
