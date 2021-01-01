@@ -34,8 +34,7 @@ int main(int argc, char *argv[])
         if(argc == 1)
         {
                 printf("Need at least one argument.\n");
-                printf("Use './todo help' for usage\n");
-                printf("\n");
+                help();
                 exit(0);
         }
     
