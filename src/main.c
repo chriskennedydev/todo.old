@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
 
                 check_dir(homedir, workdir);
                 add(item, filedir);
+                free(item);
         }
 
         if(check_delete == 0)
