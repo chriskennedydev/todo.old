@@ -1,9 +1,17 @@
-all:
-	gcc -o todo -Wall -Wextra -O2 \
-	src/*.c
+CC = gcc
+CFLAGS = -Wall -Wextra -O2
+BINARY = todo
+FILES = *.c
+SRCDIR = src
+INSTDIR = /usr/bin
+
+all: todo
+
+todo:
+	$(CC) -o $(BINARY) $(SRCDIR)/$(FILES) $(CFLAGS)
 
 clean:
-	@rm -f todo
+	@rm -f $(BINARY)
 
 install:
-	cp todo /usr/bin
+	cp $(BINARY) $(INSTDIR)
