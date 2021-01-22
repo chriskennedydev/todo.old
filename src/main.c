@@ -15,7 +15,7 @@ void check_dir(const char *homedir, const char *workdir);
 void menu(void);
 
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
         const char *homedir = getenv("HOME");
         const char *workdir = "/.todo";
