@@ -11,6 +11,7 @@
 void help(void);
 int lines_in_file(char *file_name);
 void add(char *item, char *filename);
+void del(int item, char *filename);
 void check_dir(const char *homedir, const char *workdir);
 void menu(void);
 
@@ -37,6 +38,8 @@ int main(int argc, char **argv)
                 help();
                 exit(0);
         }
+
+        check_dir(homedir, workdir);
     
         int check_usage = strncmp(argv[1], "help", 4);
         int check_add = strncmp(argv[1], "add", 4);
@@ -72,7 +75,6 @@ int main(int argc, char **argv)
                         strcat(item, " ");
                 }
 
-                check_dir(homedir, workdir);
                 add(item, filedir);
                 free(item);
         }
