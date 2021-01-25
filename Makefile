@@ -14,4 +14,4 @@ clean:
 	@rm -f $(BINARY)
 
 install:
-	cp $(BINARY) $(INSTDIR)
+	mv $(BINARY) $(INSTDIR)

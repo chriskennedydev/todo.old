@@ -12,6 +12,7 @@ void help(void);
 int lines_in_file(char *file_name);
 void add(int argc, char **argv, char *filename);
 void del(char **argv, char *filename, char *tempfile);
+void list(char *filename);
 void check_dir(const char *homedir, const char *workdir);
 
 
@@ -48,7 +49,6 @@ int main(int argc, char **argv)
         if(check_usage == 0)
         {
                 help();
-                exit(0);
         }
 
         if(check_add == 0)
@@ -61,35 +61,11 @@ int main(int argc, char **argv)
                 del(argv, filedir, tmpfile);
         }
 
-
         if(check_list == 0)
         {
-                printf("Todo List\n");
-                printf("----------\n");
-
-                FILE *fptr;
-                char item[2048];
-                int i;
-
-                fptr = fopen(filedir, "rb");
-                if(fptr == NULL)
-                {
-                        perror("Cannot open file.");
-                        return 1;
-                }
-
-                int lines = lines_in_file(filedir);
-
-                for(i = 0; i < lines; i++)
-                {
-                        if(fgets(item, 2048, fptr) != NULL)
-                        {
-                                printf("%d %s", i + 1, item);
-                        }
-                }
-
-                fclose(fptr); 
+            list(filedir);
         }
+
         return 0;
 }
 
@@ -174,6 +150,39 @@ void del(char **argv, char *filename, char *tempfile)
         rename(tempfile, filename);
 }
 
+void list(char *filename)
+{
+        char *item = malloc(2048);
+        if(item == NULL) 
+        {
+            perror("Error with malloc()");
+            exit(1);
+        }
+
+        FILE *fptr = fopen(filename, "rb");
+        if(fptr == NULL)
+        {
+            perror("Cannot open file ~/.todo/todo");
+            exit(1);
+        }
+
+        int lines = lines_in_file(filename);
+
+        printf("Todo List\n");
+        printf("----------\n");
+
+        for(int i = 0; i < lines; i++) 
+        {
+            if(fgets(item, 2048, fptr) != NULL)
+                printf("%d %s", i + 1, item);
+            else
+                perror("Shenanigans");
+
+        }
+        fclose(fptr);        
+        free(item);
+}
+
 int lines_in_file(char *file_name)
 {
         FILE *fptr;
@@ -195,10 +204,10 @@ int lines_in_file(char *file_name)
 
 void check_dir(const char *homedir, const char *workdir)
 {
-        char filedir[2048];
+        char *filedir = malloc(2048);
         strcpy(filedir, homedir);
         strcat(filedir, workdir);
-        DIR* todo = opendir(filedir);
+        DIR *todo = opendir(filedir);
 
         if(todo)
         {
@@ -213,4 +222,6 @@ void check_dir(const char *homedir, const char *workdir)
                 perror("Could not create ~/.todo dir");
                 exit(1);
         }
+
+        free(filedir);
 }
