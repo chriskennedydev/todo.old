@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -O2
+CFLAGS = -Wall -Wfatal-errors -Wshadow -Wextra -O2
 BINARY = todo
 FILES = *.c
 SRCDIR = src

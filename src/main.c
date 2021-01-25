@@ -10,10 +10,9 @@
 
 void help(void);
 int lines_in_file(char *file_name);
-void add(char *item, char *filename);
-void del(int item, char *filename);
+void add(int argc, char **argv, char *filename);
+void del(char **argv, char *filename, char *tempfile);
 void check_dir(const char *homedir, const char *workdir);
-void menu(void);
 
 
 int main(int argc, char **argv)
@@ -46,16 +45,6 @@ int main(int argc, char **argv)
         int check_list = strncmp(argv[1], "list", 4);
         int check_delete = strncmp(argv[1], "del", 4);
 
-        int i;
-        int strsize = 0;
-        for(i = 1; i < argc; i++) 
-        {
-                strsize += strlen(argv[i]);
-                if(argc > i + 1)
-                strsize++;
-        }
-
-
         if(check_usage == 0)
         {
                 help();
@@ -64,70 +53,28 @@ int main(int argc, char **argv)
 
         if(check_add == 0)
         {
-                char *item;
-                item = malloc(strsize);
-                item[0] = '\0';
-
-                for(int i = 2; i < argc; i++) 
-                {
-                        strcat(item, argv[i]);
-                        if(argc > i + 1)
-                        strcat(item, " ");
-                }
-
-                add(item, filedir);
-                free(item);
+                add(argc, argv, filedir);
         }
 
         if(check_delete == 0)
         {
-                FILE *fptr;
-                FILE *tmp_ptr;
-                char *item;
-                int i;
-                int compared_item;
-
-
-                fptr = fopen(filedir, "rb");
-                tmp_ptr = fopen(tmpfile, "wb");
-
-                if(fptr == NULL)
-                {
-                        printf("Cannot open file.\n");
-                        return 1;
-                }
-
-                int lines = lines_in_file(filedir);
-
-                for(i = 0; i < lines; i++)
-                {
-                        item = malloc(250);
-                        if(fgets(item, 250, fptr) != NULL)
-                        {
-                                compared_item = atoi(argv[2]);
-                                if(compared_item != i + 1)
-                                fprintf(tmp_ptr, "%s", item);
-                        }
-                        free(item);
-                }
-
-                fclose(fptr); 
-                fclose(tmp_ptr);
-                rename(tmpfile, filedir);
+                del(argv, filedir, tmpfile);
         }
 
 
         if(check_list == 0)
         {
-                menu();
+                printf("Todo List\n");
+                printf("----------\n");
+
                 FILE *fptr;
-                char item[250];
+                char item[2048];
                 int i;
 
                 fptr = fopen(filedir, "rb");
                 if(fptr == NULL)
                 {
-                        printf("Cannot open file.\n");
+                        perror("Cannot open file.");
                         return 1;
                 }
 
@@ -135,7 +82,7 @@ int main(int argc, char **argv)
 
                 for(i = 0; i < lines; i++)
                 {
-                        if(fgets(item, 250, fptr) != NULL)
+                        if(fgets(item, 2048, fptr) != NULL)
                         {
                                 printf("%d %s", i + 1, item);
                         }
@@ -148,24 +95,83 @@ int main(int argc, char **argv)
 
 void help(void)
 {
-        printf("usage: ./todo cmd item | list\n");
+        printf("usage: todo cmd item | list\n");
         printf("cmd: add, del\n");
         printf("item: Todo to do\n");
         printf("list: list current todos\n");
 }
 
-void add(char *item, char *filename)
+void add(int argc, char **argv, char *filename)
 {
         FILE *output;
-          
+        int strsize = 0;
+        char *item;
+
+        for(int i = 1; i < argc; i++) 
+        {
+                strsize += strlen(argv[i]);
+                if(argc > i + 1)
+                strsize++;
+        }
+
+        item = malloc(strsize);
+        if(item == NULL) 
+        {
+            perror("Error with malloc()");
+            exit(1);
+        }
+
+        item[0] = '\0';
+
+        for(int i = 2; i < argc; i++) 
+        {
+            strcat(item, argv[i]);
+            if(argc > i + 1)
+            strcat(item, " ");
+        }
+
         if((output = fopen(filename, "ab")) == NULL)
         {
-                printf("Can't open %s for reading.\n", filename);
+                perror("Can't open file for reading.");
                 exit(1);
         }
+
         fprintf(output, "%s\n", item);
 
         fclose(output);
+        free(item);
+}
+
+void del(char **argv, char *filename, char *tempfile) 
+{
+	    FILE *fptr = fopen(filename, "rb");
+	    FILE *tmp_ptr = fopen(tempfile, "wb");
+        int cmp_item; 
+        char *item;
+
+        if(fptr == NULL)
+        {
+                perror("Cannot open file.");
+                exit(1);
+        }
+
+        int lines = lines_in_file(filename);
+
+        for(int i = 0; i < lines; i++)
+        {
+                item = malloc(2048);
+                if(fgets(item, 2048, fptr) != NULL)
+                {
+                        cmp_item = atoi(argv[2]);
+                        if(cmp_item != i + 1)
+                        fprintf(tmp_ptr, "%s", item);
+                }
+                free(item);
+        }
+
+        fclose(fptr); 
+        fclose(tmp_ptr);
+        rename(tempfile, filename);
 }
 
 int lines_in_file(char *file_name)
@@ -204,13 +210,7 @@ void check_dir(const char *homedir, const char *workdir)
         }
         else 
         {
-                printf("Could not create ~/.todo dir: %s\n", strerror(errno));
+                perror("Could not create ~/.todo dir");
                 exit(1);
         }
-}
-
-void menu(void)
-{
-        printf("Todo List\n");
-        printf("----------\n");
 }
