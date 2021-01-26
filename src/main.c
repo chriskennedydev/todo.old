@@ -10,6 +10,7 @@
 
 void help(void);
 int lines_in_file(char *file_name);
+void examples(void);
 void add(int argc, char **argv, char *filename);
 void del(char **argv, char *filename, char *tempfile);
 void list(char *filename);
@@ -45,25 +46,36 @@ int main(int argc, char **argv)
         int check_add = strncmp(argv[1], "add", 4);
         int check_list = strncmp(argv[1], "list", 4);
         int check_delete = strncmp(argv[1], "del", 4);
+        int check_examples = strncmp(argv[1], "examples", 4);
 
         if(check_usage == 0)
         {
                 help();
         }
 
-        if(check_add == 0)
+        else if(check_add == 0)
         {
                 add(argc, argv, filedir);
         }
 
-        if(check_delete == 0)
+        else if(check_delete == 0)
         {
                 del(argv, filedir, tmpfile);
         }
 
-        if(check_list == 0)
+        else if(check_list == 0)
         {
             list(filedir);
+        }
+
+        else if(check_examples == 0)
+        {
+            examples();
+        }
+
+        else
+        {
+            help();
         }
 
         return 0;
@@ -71,10 +83,24 @@ int main(int argc, char **argv)
 
 void help(void)
 {
-        printf("usage: todo cmd item | list\n");
-        printf("cmd: add, del\n");
-        printf("item: Todo to do\n");
+        printf("usage: todo cmd arg\n");
+        printf("cmd: add | del | list\n");
+        printf("add -- arg: todo to do\n");
+        printf("del -- arg: number of todo to delete\n");
         printf("list: list current todos\n");
+        printf("for examples use todo examples\n");
+}
+
+void examples(void)
+{
+    printf("add a todo:\n");
+    printf("todo add refactor app\n");
+    printf("-----\n");
+    printf("delete a todo:\n");
+    printf("todo del 2\n");
+    printf("-----\n");
+    printf("list todos:\n");
+    printf("todo list\n");
 }
 
 void add(int argc, char **argv, char *filename)
