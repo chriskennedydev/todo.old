@@ -19,76 +19,76 @@ void check_dir(const char *homedir, const char *workdir);
 
 int main(int argc, char **argv)
 {
-        const char *homedir = getenv("HOME");
-        const char *workdir = "/.todo";
+    const char *homedir = getenv("HOME");
+    const char *workdir = "/.todo";
 
-        char filedir[2048];
-        char tmpfile[2048];
+    char filedir[2048];
+    char tmpfile[2048];
 
-        strcpy(filedir, homedir);
-        strcat(filedir, workdir);
-        strcat(filedir, "/todo.dat");
+    strcpy(filedir, homedir);
+    strcat(filedir, workdir);
+    strcat(filedir, "/todo.dat");
 
-        strcpy(tmpfile, homedir);
-        strcat(tmpfile, workdir);
-        strcat(tmpfile, "/temp.dat");
+    strcpy(tmpfile, homedir);
+    strcat(tmpfile, workdir);
+    strcat(tmpfile, "/temp.dat");
 
-        if(argc == 1)
-        {
-                printf("Need at least one argument.\n");
-                help();
-                exit(0);
-        }
+    if(argc == 1)
+    {
+        printf("Need at least one argument.\n");
+        help();
+        exit(0);
+    }
 
-        check_dir(homedir, workdir);
-    
-        int check_usage = strncmp(argv[1], "help", 4);
-        int check_add = strncmp(argv[1], "add", 4);
-        int check_list = strncmp(argv[1], "list", 4);
-        int check_delete = strncmp(argv[1], "del", 4);
-        int check_examples = strncmp(argv[1], "examples", 4);
+    check_dir(homedir, workdir);
 
-        if(check_usage == 0)
-        {
-                help();
-        }
+    int check_usage = strncmp(argv[1], "help", 4);
+    int check_add = strncmp(argv[1], "add", 4);
+    int check_list = strncmp(argv[1], "list", 4);
+    int check_delete = strncmp(argv[1], "del", 4);
+    int check_examples = strncmp(argv[1], "examples", 4);
 
-        else if(check_add == 0)
-        {
-                add(argc, argv, filedir);
-        }
+    if(check_usage == 0)
+    {
+        help();
+    }
 
-        else if(check_delete == 0)
-        {
-                del(argv, filedir, tmpfile);
-        }
+    else if(check_add == 0)
+    {
+        add(argc, argv, filedir);
+    }
 
-        else if(check_list == 0)
-        {
-            list(filedir);
-        }
+    else if(check_delete == 0)
+    {
+        del(argv, filedir, tmpfile);
+    }
 
-        else if(check_examples == 0)
-        {
-            examples();
-        }
+    else if(check_list == 0)
+    {
+        list(filedir);
+    }
 
-        else
-        {
-            help();
-        }
+    else if(check_examples == 0)
+    {
+        examples();
+    }
 
-        return 0;
+    else
+    {
+        help();
+    }
+
+    return 0;
 }
 
 void help(void)
 {
-        printf("usage: todo cmd arg\n");
-        printf("cmd: add | del | list\n");
-        printf("add -- arg: todo to do\n");
-        printf("del -- arg: number of todo to delete\n");
-        printf("list: list current todos\n");
-        printf("for examples use todo examples\n");
+    printf("usage: todo cmd arg\n");
+    printf("cmd: add | del | list\n");
+    printf("add -- arg: todo to do\n");
+    printf("del -- arg: number of todo to delete\n");
+    printf("list: list current todos\n");
+    printf("for examples use todo examples\n");
 }
 
 void examples(void)
@@ -105,43 +105,43 @@ void examples(void)
 
 void add(int argc, char **argv, char *filename)
 {
-        FILE *output;
-        int strsize = 0;
-        char *item;
+    FILE *output;
+    int strsize = 0;
+    char *item;
 
-        for(int i = 1; i < argc; i++) 
-        {
-                strsize += strlen(argv[i]);
-                if(argc > i + 1)
-                strsize++;
-        }
+    for(int i = 1; i < argc; i++) 
+    {
+        strsize += strlen(argv[i]);
+        if(argc > i + 1)
+        strsize++;
+    }
 
-        item = malloc(strsize);
-        if(item == NULL) 
-        {
-            perror("Error with malloc()");
-            exit(1);
-        }
+    item = malloc(strsize);
+    if(item == NULL) 
+    {
+        perror("Error with malloc()");
+        exit(1);
+    }
 
-        item[0] = '\0';
+    item[0] = '\0';
 
-        for(int i = 2; i < argc; i++) 
-        {
-            strcat(item, argv[i]);
-            if(argc > i + 1)
-            strcat(item, " ");
-        }
+    for(int i = 2; i < argc; i++) 
+    {
+        strcat(item, argv[i]);
+        if(argc > i + 1)
+        strcat(item, " ");
+    }
 
-        if((output = fopen(filename, "ab")) == NULL)
-        {
-                perror("Can't open file for reading.");
-                exit(1);
-        }
+    if((output = fopen(filename, "ab")) == NULL)
+    {
+        perror("Can't open file for reading.");
+        exit(1);
+    }
 
-        fprintf(output, "%s\n", item);
+    fprintf(output, "%s\n", item);
 
-        fclose(output);
-        free(item);
+    fclose(output);
+    free(item);
 }
 
 void del(char **argv, char *filename, char *tempfile) 
@@ -153,22 +153,22 @@ void del(char **argv, char *filename, char *tempfile)
 
         if(fptr == NULL)
         {
-                perror("Cannot open file.");
-                exit(1);
+            perror("Cannot open file.");
+            exit(1);
         }
 
         int lines = lines_in_file(filename);
 
         for(int i = 0; i < lines; i++)
         {
-                item = malloc(2048);
-                if(fgets(item, 2048, fptr) != NULL)
-                {
-                        cmp_item = atoi(argv[2]);
-                        if(cmp_item != i + 1)
-                        fprintf(tmp_ptr, "%s", item);
-                }
-                free(item);
+            item = malloc(2048);
+            if(fgets(item, 2048, fptr) != NULL)
+            {
+                    cmp_item = atoi(argv[2]);
+                    if(cmp_item != i + 1)
+                    fprintf(tmp_ptr, "%s", item);
+            }
+            free(item);
         }
 
         fclose(fptr); 
@@ -220,9 +220,9 @@ int lines_in_file(char *file_name)
         chr = getc(fptr);
         while(chr != EOF)
         {
-                if(chr == '\n')
-                        lines++;
-                chr = getc(fptr);
+            if(chr == '\n')
+                    lines++;
+            chr = getc(fptr);
         }
         fclose(fptr);
         return lines;
@@ -237,16 +237,16 @@ void check_dir(const char *homedir, const char *workdir)
 
         if(todo)
         {
-                closedir(todo);
+            closedir(todo);
         }
         else if(ENOENT == errno) 
         {
-                mkdir(filedir, 0775);
+            mkdir(filedir, 0775);
         }
         else 
         {
-                perror("Could not create ~/.todo dir");
-                exit(1);
+            perror("Could not create ~/.todo dir");
+            exit(1);
         }
 
         free(filedir);
