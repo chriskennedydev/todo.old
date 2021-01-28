@@ -107,6 +107,13 @@ void add(int argc, char **argv, char *filename)
 {
     FILE *output;
     int strsize = 0;
+    for(int i = 1; i < argc; i++) 
+    {
+        strsize += strlen(argv[i]);
+        if(argc > i + 1)
+        strsize++;
+    }
+
     char *item = malloc(strsize);
 
     if(item == NULL) 
@@ -117,12 +124,6 @@ void add(int argc, char **argv, char *filename)
 
     item[0] = '\0';
 
-    for(int i = 1; i < argc; i++) 
-    {
-        strsize += strlen(argv[i]);
-        if(argc > i + 1)
-        strsize++;
-    }
 
     for(int i = 2; i < argc; i++) 
     {
