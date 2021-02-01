@@ -42,33 +42,27 @@ int main(int argc, char **argv)
 
     check_dir(homedir, workdir);
 
-    int check_usage = strncmp(argv[1], "help", 4);
-    int check_add = strncmp(argv[1], "add", 4);
-    int check_list = strncmp(argv[1], "list", 4);
-    int check_delete = strncmp(argv[1], "del", 4);
-    int check_examples = strncmp(argv[1], "examples", 4);
-
-    if(check_usage == 0)
+    if(strncmp(argv[1], "help", 4) == 0)
     {
         help();
     }
 
-    else if(check_add == 0)
+    else if(strncmp(argv[1], "add", 4) == 0)
     {
         add(argc, argv, filedir);
     }
 
-    else if(check_delete == 0)
+    else if(strncmp(argv[1], "del", 4) == 0)
     {
         del(argv, filedir, tmpfile);
     }
 
-    else if(check_list == 0)
+    else if(strncmp(argv[1], "list", 4) == 0)
     {
         list(filedir);
     }
 
-    else if(check_examples == 0)
+    else if(strncmp(argv[1], "examples", 4) == 0)
     {
         examples();
     }
@@ -149,9 +143,15 @@ void del(char **argv, char *filename, char *tempfile)
 	    FILE *fptr = fopen(filename, "rb");
 	    FILE *tmp_ptr = fopen(tempfile, "wb");
         int cmp_item; 
-        char *item;
+        char *item = malloc(2048);
 
         if(fptr == NULL)
+        {
+            perror("Cannot open file.");
+            exit(1);
+        }
+        
+        if(tmp_ptr == NULL)
         {
             perror("Cannot open file.");
             exit(1);
@@ -161,14 +161,13 @@ void del(char **argv, char *filename, char *tempfile)
 
         for(int i = 0; i < lines; i++)
         {
-            item = malloc(2048);
+            memset(item, 0, 2048);
             if(fgets(item, 2048, fptr) != NULL)
             {
                     cmp_item = atoi(argv[2]);
                     if(cmp_item != i + 1)
                     fprintf(tmp_ptr, "%s", item);
             }
-            free(item);
         }
 
         fclose(fptr); 
@@ -214,6 +213,11 @@ int lines_in_file(char *file_name)
         FILE *fptr;
         int lines = 0;
         char chr;
+        if(fptr == NULL)
+        {
+            perror("Cannot open file ~/.todo/todo");
+            exit(1);
+        }
 
         fptr = fopen(file_name, "rb");
 
