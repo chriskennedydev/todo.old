@@ -146,8 +146,8 @@ void add(int todo_length, char **todo, char *filename)
 
 void update(int todo_length, char **todo, char *filename, char *tempfile)
 {
-	FILE *fptr = fopen(filename, "rb");
-	FILE *tmp_ptr = fopen(tempfile, "wb");
+    FILE *fptr = fopen(filename, "rb");
+    FILE *tmp_ptr = fopen(tempfile, "wb");
     int cmp_item = atoi(todo[2]);
     char *item = malloc(2048);
     int strsize = 0;
