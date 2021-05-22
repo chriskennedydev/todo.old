@@ -206,12 +206,15 @@ void update(int todo_length, char **todo, char *filename, char *tempfile)
     fclose(fptr); 
     fclose(tmp_ptr);
     rename(tempfile, filename);
+
+    free(item);
+    free(updated_todo);
 }
 
 void del(char **todo, char *filename, char *tempfile) 
 {
-	FILE *fptr = fopen(filename, "rb");
-	FILE *tmp_ptr = fopen(tempfile, "wb");
+    FILE *fptr = fopen(filename, "rb");
+    FILE *tmp_ptr = fopen(tempfile, "wb");
     int cmp_item; 
     char *item = malloc(2048);
 
@@ -243,6 +246,7 @@ void del(char **todo, char *filename, char *tempfile)
     fclose(fptr); 
     fclose(tmp_ptr);
     rename(tempfile, filename);
+    free(item);
 }
 
 void list(char *filename)

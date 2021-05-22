@@ -5,7 +5,7 @@ FILES = *.c
 SRCDIR = src
 INSTDIR = /usr/bin
 
-all: todo
+all: clean todo
 
 todo:
 	$(CC) -o $(BINARY) $(SRCDIR)/$(FILES) $(CFLAGS)
