@@ -18,7 +18,7 @@
 
 `todo del num`
 
-
+`todo update num item`
 
 ### Example
 
