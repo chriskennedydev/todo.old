@@ -2,3 +2,4 @@
 todo
 *.hex
 *.o
+*swp

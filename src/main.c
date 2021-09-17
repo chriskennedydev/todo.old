@@ -26,13 +26,24 @@ int main(int argc, char **argv)
     char filedir[2048];
     char tmpfile[2048];
 
-    strcpy(filedir, homedir);
-    strcat(filedir, workdir);
-    strcat(filedir, "/todo");
+    if(strlcpy(filedir, homedir, sizeof(filedir)) >= sizeof(filedir)) 
+	    return 1;
 
-    strcpy(tmpfile, homedir);
-    strcat(tmpfile, workdir);
-    strcat(tmpfile, "/temp");
+    if(strlcat(filedir, workdir, sizeof(filedir)) >= sizeof(filedir))
+	    return 1;
+
+    if(strlcat(filedir, "/todo", sizeof(filedir)) >= sizeof(filedir))
+	    return 1;
+
+
+    if(strlcpy(tmpfile, homedir, sizeof(tmpfile)) >= sizeof(tmpfile)) 
+	    return 1;
+
+    if(strlcat(tmpfile, workdir, sizeof(tmpfile)) >= sizeof(tmpfile))
+	    return 1;
+
+    if(strlcat(tmpfile, "/todo", sizeof(tmpfile)) >= sizeof(tmpfile))
+	    return 1;
 
     if(argc == 1)
     {
@@ -76,6 +87,7 @@ int main(int argc, char **argv)
     else
     {
         help();
+	return 1;
     }
 
     return 0;
