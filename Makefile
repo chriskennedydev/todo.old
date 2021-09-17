@@ -1,9 +1,9 @@
-CC = gcc
+CC = clang
 CFLAGS = -Wall -Wfatal-errors -Wshadow -Wextra -O2
 BINARY = todo
 FILES = *.c
 SRCDIR = src
-INSTDIR = /usr/bin
+INSTDIR = /usr/local/bin
 
 all: clean todo
 
