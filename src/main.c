@@ -23,27 +23,22 @@ int main(int argc, char **argv)
     const char *homedir = getenv("HOME");
     const char *workdir = "/.todo";
 
-    char filedir[2048];
-    char tmpfile[2048];
+    char filedir[4096];
+    char tmpfile[4096];
 
-    if(strlcpy(filedir, homedir, sizeof(filedir)) >= sizeof(filedir)) 
-	    return 1;
+    if(strlcpy(filedir, homedir, sizeof(filedir)) >= 4096)
+	return 1;
+    if(strlcat(filedir, workdir, sizeof(filedir)) >= 4096)
+	return 1;
+    if(strlcat(filedir, "/todo", sizeof(filedir)) >= 4096)
+	return 1;
 
-    if(strlcat(filedir, workdir, sizeof(filedir)) >= sizeof(filedir))
-	    return 1;
-
-    if(strlcat(filedir, "/todo", sizeof(filedir)) >= sizeof(filedir))
-	    return 1;
-
-
-    if(strlcpy(tmpfile, homedir, sizeof(tmpfile)) >= sizeof(tmpfile)) 
-	    return 1;
-
-    if(strlcat(tmpfile, workdir, sizeof(tmpfile)) >= sizeof(tmpfile))
-	    return 1;
-
-    if(strlcat(tmpfile, "/todo", sizeof(tmpfile)) >= sizeof(tmpfile))
-	    return 1;
+    if(strlcpy(tmpfile, homedir, sizeof(tmpfile)) >= 4096) 
+	return 1;
+    if(strlcat(tmpfile, workdir, sizeof(tmpfile)) >= 4096)
+	return 1;
+    if(strlcat(tmpfile, "/temp", sizeof(tmpfile)) >= 4096)
+	return 1;
 
     if(argc == 1)
     {
@@ -119,6 +114,7 @@ void add(int todo_length, char **todo, char *filename)
 {
     FILE *output;
     int strsize = 0;
+	int buf_size = 4096;
     for(int i = 1; i < todo_length; i++) 
     {
         strsize += strlen(todo[i]);
@@ -126,22 +122,13 @@ void add(int todo_length, char **todo, char *filename)
         strsize++;
     }
 
-    char *item = malloc(strsize);
-
-    if(item == NULL) 
-    {
-        perror("Error with malloc()");
-        exit(1);
-    }
-
-    item[0] = '\0';
-
+	char item[buf_size];
 
     for(int i = 2; i < todo_length; i++) 
     {
-        strcat(item, todo[i]);
+        strlcat(item, todo[i], sizeof(item));
         if(todo_length > i + 1)
-            strcat(item, " ");
+            strlcat(item, " ", sizeof(item));
     }
 
     if((output = fopen(filename, "ab")) == NULL)
@@ -153,7 +140,6 @@ void add(int todo_length, char **todo, char *filename)
     fprintf(output, "%s\n", item);
 
     fclose(output);
-    free(item);
 }
 
 void update(int todo_length, char **todo, char *filename, char *tempfile)
@@ -161,7 +147,8 @@ void update(int todo_length, char **todo, char *filename, char *tempfile)
     FILE *fptr = fopen(filename, "rb");
     FILE *tmp_ptr = fopen(tempfile, "wb");
     int cmp_item = atoi(todo[2]);
-    char *item = malloc(2048);
+	int buf_size = 4096;
+    char *item = malloc(4096);
     int strsize = 0;
 
     for(int i = 1; i < todo_length; i++) 
@@ -170,15 +157,13 @@ void update(int todo_length, char **todo, char *filename, char *tempfile)
         if(todo_length > i + 1)
         strsize++;
     }
+	char updated_todo[buf_size];
 
-    char *updated_todo = malloc(strsize);
     if(item == NULL) 
     {
         perror("Error with malloc()");
         exit(1);
     }
-
-    updated_todo[0] = '\0';
 
 
     if(fptr == NULL)
@@ -197,9 +182,9 @@ void update(int todo_length, char **todo, char *filename, char *tempfile)
 
     for(int i = 3; i < todo_length; i++) 
     {
-        strcat(updated_todo, todo[i]);
+        strlcat(updated_todo, todo[i], sizeof(updated_todo));
         if(todo_length > i + 1)
-            strcat(updated_todo, " ");
+            strlcat(updated_todo, " ", sizeof(updated_todo));
     }
 
     for(int i = 0; i < lines; i++) 
@@ -220,7 +205,6 @@ void update(int todo_length, char **todo, char *filename, char *tempfile)
     rename(tempfile, filename);
 
     free(item);
-    free(updated_todo);
 }
 
 void del(char **todo, char *filename, char *tempfile) 

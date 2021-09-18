@@ -1,0 +1,6 @@
+#!/bin/sh
+
+./todo add openbsd
+./todo update 1 read openbsd
+./todo list
+./todo del 1
