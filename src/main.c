@@ -26,18 +26,19 @@ int main(int argc, char **argv)
     char filedir[4096];
     char tmpfile[4096];
 
-    if(strlcpy(filedir, homedir, sizeof(filedir)) >= 4096)
+
+    if(strlcpy(filedir, homedir, sizeof(filedir)) >= sizeof(filedir))
 	return 1;
-    if(strlcat(filedir, workdir, sizeof(filedir)) >= 4096)
+    if(strlcat(filedir, workdir, sizeof(filedir)) >= sizeof(filedir))
 	return 1;
-    if(strlcat(filedir, "/todo", sizeof(filedir)) >= 4096)
+    if(strlcat(filedir, "/todo", sizeof(filedir)) >= sizeof(filedir))
 	return 1;
 
-    if(strlcpy(tmpfile, homedir, sizeof(tmpfile)) >= 4096) 
+    if(strlcpy(tmpfile, homedir, sizeof(tmpfile)) >= sizeof(filedir)) 
 	return 1;
-    if(strlcat(tmpfile, workdir, sizeof(tmpfile)) >= 4096)
+    if(strlcat(tmpfile, workdir, sizeof(tmpfile)) >= sizeof(filedir))
 	return 1;
-    if(strlcat(tmpfile, "/temp", sizeof(tmpfile)) >= 4096)
+    if(strlcat(tmpfile, "/temp", sizeof(tmpfile)) >= sizeof(filedir))
 	return 1;
 
     if(argc == 1)
