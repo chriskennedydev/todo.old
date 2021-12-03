@@ -26,13 +26,15 @@ int main(int argc, char **argv)
     char filedir[2048];
     char tmpfile[2048];
 
-    strcpy(filedir, homedir);
-    strcat(filedir, workdir);
-    strcat(filedir, "/todo");
+    strncpy(filedir, homedir, sizeof(filedir) - 1);
+    strncat(filedir, workdir, sizeof(filedir) - 1);
+    strncat(filedir, "/todo", sizeof(filedir) - 1);
+    filedir[2047] = '\0';
 
-    strcpy(tmpfile, homedir);
-    strcat(tmpfile, workdir);
-    strcat(tmpfile, "/temp");
+    strncpy(tmpfile, homedir, sizeof(tmpfile) - 1);
+    strncat(tmpfile, workdir, sizeof(tmpfile) - 1);
+    strncat(tmpfile, "/temp", sizeof(tmpfile) - 1);
+    tmpfile[2047] = '\0';
 
     if(argc == 1)
     {
