@@ -20,73 +20,67 @@ void check_dir(const char *homedir, const char *workdir);
 
 int main(int argc, char **argv)
 {
-	const char *homedir = getenv("HOME");
-	const char *workdir = "/.todo";
+    const char *homedir = getenv("HOME");
+    const char *workdir = "/.todo";
 
-	char filedir[4096];
-	char tmpfile[4096];
+    char filedir[2048];
+    char tmpfile[2048];
 
+    strncpy(filedir, homedir, sizeof(filedir) - 1);
+    strncat(filedir, workdir, sizeof(filedir) - 1);
+    strncat(filedir, "/todo", sizeof(filedir) - 1);
+    filedir[2047] = '\0';
 
-	if(strlcpy(filedir, homedir, sizeof(filedir)) >= sizeof(filedir))
-		return 1;
-	if(strlcat(filedir, workdir, sizeof(filedir)) >= sizeof(filedir))
-		return 1;
-	if(strlcat(filedir, "/todo", sizeof(filedir)) >= sizeof(filedir))
-		return 1;
+    strncpy(tmpfile, homedir, sizeof(tmpfile) - 1);
+    strncat(tmpfile, workdir, sizeof(tmpfile) - 1);
+    strncat(tmpfile, "/temp", sizeof(tmpfile) - 1);
+    tmpfile[2047] = '\0';
 
-	if(strlcpy(tmpfile, homedir, sizeof(tmpfile)) >= sizeof(filedir)) 
-		return 1;
-	if(strlcat(tmpfile, workdir, sizeof(tmpfile)) >= sizeof(filedir))
-		return 1;
-	if(strlcat(tmpfile, "/temp", sizeof(tmpfile)) >= sizeof(filedir))
-		return 1;
+    if(argc == 1)
+    {
+        printf("Need at least one argument.\n");
+        help();
+        exit(0);
+    }
 
-	if(argc == 1)
-	{
-		printf("Need at least one argument.\n");
-		help();
-		exit(0);
-	}
+    check_dir(homedir, workdir);
 
-	check_dir(homedir, workdir);
+    if(strncmp(argv[1], "help", 4) == 0)
+    {
+        help();
+    }
 
-	if(strncmp(argv[1], "help", 4) == 0)
-	{
-		help();
-	}
+    else if(strncmp(argv[1], "add", 4) == 0)
+    {
+        add(argc, argv, filedir);
+    }
 
-	else if(strncmp(argv[1], "add", 4) == 0)
-	{
-		add(argc, argv, filedir);
-	}
+    else if(strncmp(argv[1], "del", 4) == 0)
+    {
+        del(argv, filedir, tmpfile);
+    }
 
-	else if(strncmp(argv[1], "del", 4) == 0)
-	{
-		del(argv, filedir, tmpfile);
-	}
+    else if(strncmp(argv[1], "list", 4) == 0)
+    {
+        list(filedir);
+    }
 
-	else if(strncmp(argv[1], "list", 4) == 0)
-	{
-		list(filedir);
-	}
+    else if(strncmp(argv[1], "examples", 4) == 0)
+    {
+        examples();
+    }
 
-	else if(strncmp(argv[1], "examples", 4) == 0)
-	{
-		examples();
-	}
+    else if(strncmp(argv[1], "update", 4) == 0)
+    {
+        update(argc, argv, filedir, tmpfile);
+    }
 
-	else if(strncmp(argv[1], "update", 4) == 0)
-	{
-		update(argc, argv, filedir, tmpfile);
-	}
+    else
+    {
+        help();
+    }
 
-	else
-	{
-		help();
-		return 1;
-	}
-
-	return 0;
+    return 0;
 }
 
 void help(void)
