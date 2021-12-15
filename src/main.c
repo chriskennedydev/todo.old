@@ -109,7 +109,7 @@ void add(int todo_length, char **todo, char *filename)
 {
 	FILE *output;
 	int strsize = 0;
-	int buf_size = 4096;
+	int buf_size = 2048;
 	for(int i = 1; i < todo_length; i++) 
 	{
 		strsize += strlen(todo[i]);
@@ -121,9 +121,9 @@ void add(int todo_length, char **todo, char *filename)
 
 	for(int i = 2; i < todo_length; i++) 
 	{
-		strlcat(item, todo[i], sizeof(item));
+		strncat(item, todo[i], sizeof(item) - 1);
 		if(todo_length > i + 1)
-			strlcat(item, " ", sizeof(item));
+			strncat(item, " ", sizeof(item) - 1);
 	}
 
 	if((output = fopen(filename, "ab")) == NULL)
@@ -142,8 +142,8 @@ void update(int todo_length, char **todo, char *filename, char *tempfile)
 	FILE *fptr = fopen(filename, "rb");
 	FILE *tmp_ptr = fopen(tempfile, "wb");
 	int cmp_item = atoi(todo[2]);
-	int buf_size = 4096;
-	char *item = malloc(4096);
+	int buf_size = 2048;
+	char *item = malloc(2048);
 	int strsize = 0;
 
 	for(int i = 1; i < todo_length; i++) 
@@ -177,9 +177,9 @@ void update(int todo_length, char **todo, char *filename, char *tempfile)
 
 	for(int i = 3; i < todo_length; i++) 
 	{
-		strlcat(updated_todo, todo[i], sizeof(updated_todo));
+		strncat(updated_todo, todo[i], sizeof(updated_todo) - 1);
 		if(todo_length > i + 1)
-			strlcat(updated_todo, " ", sizeof(updated_todo));
+			strncat(updated_todo, " ", sizeof(updated_todo) - 1);
 	}
 
 	for(int i = 0; i < lines; i++) 

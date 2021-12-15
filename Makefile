@@ -1,4 +1,4 @@
-CC = clang
+CC = gcc
 CFLAGS = -Wall -Wfatal-errors -Wshadow -Wextra -O2
 BINARY = todo
 FILES = *.c
