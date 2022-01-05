@@ -4,3 +4,4 @@
 ./todo update 1 read openbsd
 ./todo list
 ./todo del 1
+rm -rf ~/.todo
