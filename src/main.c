@@ -15,7 +15,7 @@ void add(int todo_length, char **todo, char *filename);
 void update(int todo_length, char **todo, char *filename, char *tempfile);
 void del(char **todo, char *filename, char *tempfile);
 void list(char *filename);
-void check_dir(const char *homedir, const char *workdir);
+void check_dir(const char *);
 
 
 int main(int argc, char **argv)
@@ -28,6 +28,8 @@ int main(int argc, char **argv)
 
     strncpy(filedir, homedir, sizeof(filedir) - 1);
     strncat(filedir, workdir, sizeof(filedir) - 1);
+    check_dir(filedir);
+
     strncat(filedir, "/todo", sizeof(filedir) - 1);
     filedir[2047] = '\0';
 
@@ -42,8 +44,6 @@ int main(int argc, char **argv)
         help();
         exit(0);
     }
-
-    check_dir(homedir, workdir);
 
     if(strncmp(argv[1], "help", 4) == 0)
     {
@@ -108,15 +108,7 @@ void examples(void)
 void add(int todo_length, char **todo, char *filename)
 {
     FILE *output;
-    int strsize = 0;
     int buf_size = 2048;
-    for(int i = 1; i < todo_length; i++) 
-    {
-        strsize += strlen(todo[i]);
-        if(todo_length > i + 1)
-            strsize++;
-    }
-
     char item[buf_size];
 
     for(int i = 2; i < todo_length; i++) 
@@ -125,6 +117,8 @@ void add(int todo_length, char **todo, char *filename)
         if(todo_length > i + 1)
             strncat(item, " ", sizeof(item) - 1);
     }
+
+    item[buf_size - 1] = '\0';
 
     if((output = fopen(filename, "ab")) == NULL)
     {
@@ -144,14 +138,7 @@ void update(int todo_length, char **todo, char *filename, char *tempfile)
     int cmp_item = atoi(todo[2]);
     int buf_size = 2048;
     char *item = malloc(2048);
-    int strsize = 0;
 
-    for(int i = 1; i < todo_length; i++) 
-    {
-        strsize += strlen(todo[i]);
-        if(todo_length > i + 1)
-            strsize++;
-    }
     char updated_todo[buf_size];
 
     if(item == NULL) 
@@ -181,6 +168,8 @@ void update(int todo_length, char **todo, char *filename, char *tempfile)
         if(todo_length > i + 1)
             strncat(updated_todo, " ", sizeof(updated_todo) - 1);
     }
+
+    updated_todo[buf_size - 1] = '\0';
 
     for(int i = 0; i < lines; i++) 
     {
@@ -296,12 +285,8 @@ int lines_in_file(char *file_name)
     return lines;
 }
 
-void check_dir(const char *homedir, const char *workdir)
+void check_dir(const char *filedir)
 {
-    char *filedir = malloc(2048);
-    strncpy(filedir, homedir, sizeof(filedir) - 1);
-    strncat(filedir, workdir, sizeof(filedir) - 1);
-    filedir[2047] = '\0';
     DIR *todo = opendir(filedir);
 
     if(todo)
@@ -317,6 +302,4 @@ void check_dir(const char *homedir, const char *workdir)
         perror("Could not create ~/.todo dir");
         exit(1);
     }
-
-    free(filedir);
 }
