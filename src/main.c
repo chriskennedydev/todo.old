@@ -3,9 +3,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <errno.h> 
-#include <unistd.h>
 #include <pwd.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 
 void help(void);
@@ -16,7 +14,6 @@ void update(int todo_length, char **todo, char *filename, char *tempfile);
 void del(char **todo, char *filename, char *tempfile);
 void list(char *filename);
 void check_dir(const char *);
-
 
 int main(int argc, char **argv)
 {
@@ -45,32 +42,32 @@ int main(int argc, char **argv)
         exit(0);
     }
 
-    if(strncmp(argv[1], "help", 4) == 0)
+    if(strncmp(argv[1], "help", sizeof(argv[1] - 1)) == 0)
     {
         help();
     }
 
-    else if(strncmp(argv[1], "add", 4) == 0)
+    else if(strncmp(argv[1], "add", sizeof(argv[1] - 1)) == 0)
     {
         add(argc, argv, filedir);
     }
 
-    else if(strncmp(argv[1], "del", 4) == 0)
+    else if(strncmp(argv[1], "del", sizeof(argv[1] - 1)) == 0)
     {
         del(argv, filedir, tmpfile);
     }
 
-    else if(strncmp(argv[1], "list", 4) == 0)
+    else if(strncmp(argv[1], "list", sizeof(argv[1] - 1)) == 0)
     {
         list(filedir);
     }
 
-    else if(strncmp(argv[1], "examples", 4) == 0)
+    else if(strncmp(argv[1], "examples", sizeof(argv[1] - 1)) == 0)
     {
         examples();
     }
 
-    else if(strncmp(argv[1], "update", 4) == 0)
+    else if(strncmp(argv[1], "update", sizeof(argv[1] - 1)) == 0)
     {
         update(argc, argv, filedir, tmpfile);
     }
