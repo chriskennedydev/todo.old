@@ -12,6 +12,7 @@ void examples(void);
 void add(int todo_length, char **todo, char *filename);
 void update(int todo_length, char **todo, char *filename, char *tempfile);
 void del(char **todo, char *filename, char *tempfile);
+void done(char **todo, char *filename, char *tempfile);
 void list(char *filename);
 void check_dir(const char *);
 
@@ -70,6 +71,11 @@ int main(int argc, char **argv)
     else if(strncmp(argv[1], "update", sizeof(argv[1] - 1)) == 0)
     {
         update(argc, argv, filedir, tmpfile);
+    }
+
+    else if(strncmp(argv[1], "done", sizeof(argv[1] - 1)) == 0)
+    {
+	done(argv, filedir, tmpfile);
     }
 
     else
@@ -187,6 +193,63 @@ void update(int todo_length, char **todo, char *filename, char *tempfile)
 
     free(item);
 }
+
+void done(char **todo, char *filename, char *tempfile)
+{
+    FILE *fptr = fopen(filename, "rb");
+    FILE *tmp_ptr = fopen(tempfile, "wb");
+    int cmp_item = atoi(todo[2]);
+    char *item = malloc(2048);
+    int buf_size = 2048;
+    char updated_todo[buf_size];
+
+    if(item == NULL)
+    {
+	perror("Error with malloc()");
+	exit(1);
+    }
+
+    if(fptr == NULL)
+    {
+	perror("Cannot open file.");
+	exit(1);
+    }
+
+    if(tmp_ptr == NULL)
+    {
+	perror("Cannot open file.");
+	exit(1);
+    }
+
+    int lines = lines_in_file(filename);
+
+    for(int i = 0; i < lines; i++)
+    {
+	memset(item, 0, 2048);
+	if(fgets(item, 2048, fptr) != NULL)
+	{
+	    if(cmp_item == i + 1)
+	    {
+		item[strcspn(item, "\n")] = 0;
+
+		strncat(updated_todo, item, sizeof(updated_todo) - 1);
+		strncat(updated_todo, " ✓", sizeof(updated_todo) - 1);
+		fprintf(tmp_ptr, "%s\n", updated_todo);
+	    }
+	    
+	    else
+		fprintf(tmp_ptr, "%s", item);
+	}
+    }
+    updated_todo[buf_size - 1] = '\0';
+
+    fclose(fptr);
+    fclose(tmp_ptr);
+    rename(tempfile, filename);
+    free(item);
+}
+	
+	
 
 void del(char **todo, char *filename, char *tempfile) 
 {
