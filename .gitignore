@@ -3,3 +3,5 @@ todo
 *.hex
 *.o
 *swp
+bin/
+pkg/
