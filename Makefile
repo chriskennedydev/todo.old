@@ -1,17 +1,29 @@
 CC = gcc
-CFLAGS = -Wall -Wfatal-errors -Wshadow -Wextra -O2
+DEBUG_FLAGS = -Wall -Wfatal-errors -Wshadow -Wextra -O2
+RELEASE_FLAGS = -Wall -Wfatal-errors -Wshadow -Wextra -O3
 BINARY = todo
+BINDIR = bin
+PKGDIR = pkg
 FILES = *.c
 SRCDIR = src
 INSTDIR = /usr/local/bin
 
-all: clean todo
+all: clean debug 
 
-todo:
-	$(CC) -o $(BINARY) $(SRCDIR)/$(FILES) $(CFLAGS)
+debug: | $(BINDIR)
+	$(CC) -o $(BINDIR)/$(BINARY) $(SRCDIR)/$(FILES) $(DEBUG_FLAGS)
+
+$(BINDIR):
+	mkdir $@
+
+release: | $(PKGDIR)
+	$(CC) -o $(PKGDIR)/$(BINARY) $(SRCDIR)/$(FILES) $(RELEASE_FLAGS)
+
+$(PKGDIR):
+	mkdir $@
 
 clean:
-	@rm -f $(BINARY)
+	@rm -rf $(BINDIR) $(PKGDIR)
 
 install:
-	mv $(BINARY) $(INSTDIR)
+	mv $(PKGDIR)/$(BINARY) $(INSTDIR)
