@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 
     else if(strncmp(argv[1], "done", sizeof(argv[1] - 1)) == 0)
     {
-	complete_todo(argv, filedir, tmpfile);
+        complete_todo(argv, filedir, tmpfile);
     }
 
     else
@@ -243,15 +243,14 @@ void complete_todo(char **todo, char *filename, char *tempfile)
         {
             if(cmp_item == i + 1)
             {
-            item[strcspn(item, "\n")] = 0;
+                item[strcspn(item, "\n")] = 0;
 
-            strncat(updated_todo, item, sizeof(updated_todo) - 1);
-            strncat(updated_todo, " ✓", sizeof(updated_todo) - 1);
-            fprintf(tmp_ptr, "%s\n", updated_todo);
+                strncat(updated_todo, item, sizeof(updated_todo) - 1);
+                strncat(updated_todo, " ✓", sizeof(updated_todo) - 1);
+                fprintf(tmp_ptr, "%s\n", updated_todo);
+            } else {
+                fprintf(tmp_ptr, "%s", item);
             }
-            
-            else
-            fprintf(tmp_ptr, "%s", item);
         }
     }
     updated_todo[buf_size - 1] = '\0';
@@ -291,8 +290,9 @@ void delete_todo(char **todo, char *filename, char *tempfile)
         if(fgets(item, 2048, fptr) != NULL)
         {
             cmp_item = atoi(todo[2]);
-            if(cmp_item != i + 1)
+            if(cmp_item != i + 1) {
                 fprintf(tmp_ptr, "%s", item);
+            }
         }
     }
 
@@ -347,16 +347,14 @@ int lines_in_file(char *file_name)
     FILE *fptr = fopen(file_name, "rb");
     int lines = 0;
     char chr;
-    if(fptr == NULL)
-    {
+    if(fptr == NULL) {
         perror("Cannot open file ~/.todo/todo");
         exit(1);
     }
 
 
     chr = getc(fptr);
-    while(chr != EOF)
-    {
+    while(chr != EOF) {
         if(chr == '\n')
             lines++;
         chr = getc(fptr);
@@ -369,16 +367,11 @@ void check_dir(const char *filedir)
 {
     DIR *todo = opendir(filedir);
 
-    if(todo)
-    {
+    if(todo) {
         closedir(todo);
-    }
-    else if(ENOENT == errno) 
-    {
+    } else if(ENOENT == errno) {
         mkdir(filedir, 0775);
-    }
-    else 
-    {
+    } else {
         perror("Could not create ~/.todo dir");
         exit(1);
     }
